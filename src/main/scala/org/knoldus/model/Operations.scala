@@ -15,61 +15,58 @@ class Operations {
     s"Keyspace has been created!"
   }
 
-  private def createTable(session: Session): Unit = {
+  private def createTable(): Unit = {
 
-    session.execute("create table if not exists employee (id int, name text, city text,salary varint, phone varint, primary key(id,salary))")
-    session.execute("create table if not exists employee1(id int, name text, city text,salary varint, phone varint, primary key(city))")
+    cassandraSession.execute("create table if not exists employee (id int, name text, city text,salary varint, phone varint, primary key(id,salary))")
+    cassandraSession.execute("create table if not exists employee1(id int, name text, city text,salary varint, phone varint, primary key(city))")
   }
 
-  private def getAllRecord(session: Session): Unit = {
-    val record = session.execute("select * from employee").asScala.toList
-    record.foreach(println(_))
+  def getAllRecord(): Unit = {
+    val record = cassandraSession.execute("select * from employee").asScala.toList
+    record.foreach(data => log.info(data))
   }
 
-  private def getRecordById(session: Session, employee_id: Int): Unit = {
+  def getRecordById(employee_id: Int): Unit = {
 
-    val record = session.execute(s"select * from employee where id=${employee_id}").asScala.toList
-    record.foreach(println(_))
-    println()
+    val record = cassandraSession.execute(s"select * from employee where id=${employee_id}").asScala.toList
+    record.foreach(data => log.info(data))
+
   }
 
-  private def updateRecord(session: Session, id: Int, salary: Int): Unit = {
-    session.execute(s"update employee set city='chandigarh' where id=${id} AND salary=${salary}")
-    getAllRecord(session)
+  def updateRecord(id: Int, salary: Int): Unit = {
+    cassandraSession.execute(s"update employee set city='chandigarh' where id=${id} AND salary=${salary}")
   }
 
-  private def getRecordBySalary(session: Session, salary: Int, id: Int): Unit = {
-    val record = session.execute(s"select * from employee where id =${id} AND salary > ${salary} ")
-    println("fetch record salary where greater than 30000")
-    record.forEach(println(_))
-    println()
+  def getRecordBySalary(salary: Int, id: Int): Unit = {
+    val record = cassandraSession.execute(s"select * from employee where id =${id} AND salary > ${salary} ")
+    log.info("fetch record salary where greater than 30000")
+    record.forEach(data => log.info(data))
   }
 
-  private def getRecordByCity(session: Session, city: String): Unit = {
+  def getRecordByCity(city: String): Unit = {
 
-    session.execute("create index if not exists cityIndex on employee(city)")
-    val record = session.execute(s"select * from employee where city ='${city}'").asScala.toList
-    record.foreach(println(_))
-    println()
+    cassandraSession.execute("create index if not exists cityIndex on employee(city)")
+    val record = cassandraSession.execute(s"select * from employee where city ='${city}'").asScala.toList
+    record.foreach(data => log.info(data))
   }
 
-  private def deleteRecordByCity(session: Session, city: String): Unit = {
+  def deleteRecordByCity(city: String): Unit = {
 
-    session.execute(s"delete from employee1 where city = '${city}'")
-    val record = session.execute("select * from employee1").asScala.toList
-    record.foreach(println(_))
+    cassandraSession.execute(s"delete from employee1 where city = '${city}'")
+    val record = cassandraSession.execute("select * from employee1").asScala.toList
+    record.foreach(data => log.info(data))
   }
 
-  private def insertRecord(session: Session): Unit = {
+  def insertRecord(): Unit = {
 
-    session.execute("insert into employee(id,name,city,salary,phone) values(2,'Sudeep James Tirkey','Ghaziabad',12000,9810622717)")
-    session.execute("insert into employee(id,name,city,salary,phone) values(1,'Vinay Kuamr','Gurgaon',12000,9910645994)")
-    session.execute("insert into employee(id,name,city,salary,phone) values(1,'Abhishek Trivedi','Kanpur',14000,886089556)")
-    session.execute("insert into employee(id,name,city,salary,phone) values(4,'Shahab Khan','Delhi',10000,9811660867)")
+    cassandraSession.execute("insert into employee(id,name,city,salary,phone) values(2,'Sudeep James Tirkey','Ghaziabad',12000,9810622717)")
+    cassandraSession.execute("insert into employee(id,name,city,salary,phone) values(1,'Vinay Kuamr','Gurgaon',12000,9910645994)")
+    cassandraSession.execute("insert into employee(id,name,city,salary,phone) values(1,'Abhishek Trivedi','Kanpur',14000,886089556)")
+    cassandraSession.execute("insert into employee(id,name,city,salary,phone) values(4,'Shahab Khan','Delhi',10000,9811660867)")
 
-    session.execute("insert into employee1(id,name,city,salary,phone) values(2,'Sudeep James Tirkey','Ghaziabad',12000,9810622717)")
-    session.execute("insert into employee1(id,name,city,salary,phone) values(1,'Vinay Kuamr','Gurgaon',12000,9910645994)")
-    session.execute("insert into employee1(id,name,city,salary,phone) values(3,'Abhishek Trivedi','Kanpur',14000,886089556)")
-    session.execute("insert into employee1(id,name,city,salary,phone) values(4,'Shahab Khan','Delhi',10000,9811660867)")
+    cassandraSession.execute("insert into employee1(id,name,city,salary,phone) values(2,'Sudeep James Tirkey','Ghaziabad',12000,9810622717)")
+    cassandraSession.execute("insert into employee1(id,name,city,salary,phone) values(1,'Vinay Kuamr','Gurgaon',12000,9910645994)")
+    cassandraSession.execute("insert into employee1(id,name,city,salary,phone) values(3,'Abhishek Trivedi','Kanpur',14000,886089556)")
+    cassandraSession.execute("insert into employee1(id,name,city,salary,phone) values(4,'Shahab Khan','Delhi',10000,9811660867)")
   }
 }
